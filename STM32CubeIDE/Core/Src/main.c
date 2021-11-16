@@ -6,12 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -42,7 +43,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int a = 0;
+int b = -1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +65,6 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -92,15 +93,76 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_11);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_12);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_13);
-	 HAL_Delay(500);
-    /* USER CODE END WHILE */
+	  if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_15) == GPIO_PIN_SET)
+	  {
+		  if(++a >= 5)
+		  {
+			  a = 1;
+		  }
+	  }
+
+	  if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_14) == GPIO_PIN_SET)
+	  {
+	  		  b++;
+	  		  if (b > 5)
+	  		  {
+	  			  b = 0;
+	  		  }
+	  }
+
+
+	  HAL_Delay (400);
+
+
+	  switch (a)
+	  {
+		case 1:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+			break;
+
+		case 2:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+			break;
+
+		case 3:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+			break;
+
+		case 4:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+			break;
+	 }
+
+	  switch (b)
+	  {
+	  		case 1:
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+	  			break;
+
+	  		case 2:
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+	  			break;
+
+	  		case 3:
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+	  			break;
+
+	  		case 4:
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+	  			break;
+
+	  		case 5:
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+	  			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+	  			break;
+	  	}
+	/* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -178,3 +240,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
