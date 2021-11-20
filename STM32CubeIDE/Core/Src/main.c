@@ -6,12 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -42,11 +43,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int i = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -84,6 +86,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -92,14 +97,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_11);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_12);
-	 HAL_Delay(500);
-	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_13);
-	 HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -142,8 +139,74 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* EXTI15_10_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+}
 
+/* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == GPIO_PIN_12)
+	{
+		if (++i > 8)
+		{
+			i = 8;
+		}
+	}
+
+	if (GPIO_Pin == GPIO_PIN_13)
+	{
+		if(--i < 0)
+		{
+			i = 0;
+		}
+	}
+
+	switch (i)
+	{
+		case 2:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			break;
+
+		case 4:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			break;
+
+		case 6:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			break;
+
+		case 8:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+			break;
+
+		default:
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			HAL_GPIO_WritePin (GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			break;
+	}
+}
 /* USER CODE END 4 */
 
 /**
